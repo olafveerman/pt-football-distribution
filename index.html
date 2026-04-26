@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liga Portugal — Club Map</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <div id="panel">
+      <div class="panel-header">
+        <h1>Liga Portugal</h1>
+        <p class="panel-subtitle">Club Geographic Distribution</p>
+      </div>
+
+      <div class="panel-section">
+        <span class="panel-label">Season</span>
+        <select id="season-select">
+          <option value="2025-26">2025–26</option>
+        </select>
+      </div>
+
+      <div class="panel-section">
+        <span class="panel-label">Leagues</span>
+        <div class="league-filters">
+          <label class="league-filter">
+            <input type="checkbox" data-league="liga-1" checked />
+            <span class="league-dot" style="background:#E63946"></span>
+            <span class="league-name">Liga Portugal 1</span>
+            <span class="league-count" id="count-liga-1"></span>
+          </label>
+          <label class="league-filter">
+            <input type="checkbox" data-league="liga-2" checked />
+            <span class="league-dot" style="background:#457B9D"></span>
+            <span class="league-name">Liga Portugal 2</span>
+            <span class="league-count" id="count-liga-2"></span>
+          </label>
+          <label class="league-filter">
+            <input type="checkbox" data-league="liga-3" checked />
+            <span class="league-dot" style="background:#2A9D8F"></span>
+            <span class="league-name">Liga Portugal 3</span>
+            <span class="league-count" id="count-liga-3"></span>
+          </label>
+        </div>
+      </div>
+
+      <p class="panel-note">
+        Liga 2 &amp; 3 rosters are approximate — verify before publishing.
+      </p>
+    </div>
+
+    <div id="insets">
+      <div class="inset-wrapper">
+        <div id="inset-madeira" class="inset-map"></div>
+        <span class="inset-label">Madeira</span>
+      </div>
+      <div class="inset-wrapper">
+        <div id="inset-azores" class="inset-map"></div>
+        <span class="inset-label">Azores</span>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
