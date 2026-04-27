@@ -19,16 +19,18 @@ const LEAGUE_LABELS = {
 const ALL_LEAGUES = ['liga-1', 'liga-2', 'liga-3'];
 
 let currentSeason = '2025-26';
+const activeLeagueSet = new Set(ALL_LEAGUES);
 
 // ── Map instances ─────────────────────────────────────────────────────────────
 
 const mainMap = new maplibregl.Map({
   container: 'map',
   style: STYLE,
-  bounds: [[-9.6, 36.7], [-6.1, 42.2]],   // mainland Portugal
+  bounds: [[-9.6, 36.7], [-6.1, 42.2]], // mainland Portugal initial view
   fitBoundsOptions: { padding: 40 },
-  maxBounds: [[-10.5, 36.4], [-5.5, 42.5]], // restrict pan to mainland
-  minZoom: 5.5,
+  // No maxBounds: a tight bounds forces minZoom up on wide screens,
+  // preventing the user from zooming out to see all of Portugal.
+  minZoom: 4.5,
   maxZoom: 18,
   attributionControl: false,
 });
@@ -163,6 +165,35 @@ function setupLayers(map, { withLabels = false } = {}) {
 mainMap.on('load', () => {
   updateCounts(currentSeason);
   setupLayers(mainMap, { withLabels: true });
+
+  // Heatmap — inserted below the circle layers via beforeId
+  mainMap.addLayer({
+    id: 'clubs-heatmap',
+    type: 'heatmap',
+    source: 'clubs',
+    maxzoom: 11,
+    layout: { visibility: 'none' },
+    paint: {
+      // Each club contributes equally regardless of league
+      'heatmap-weight': 1,
+      // Increase intensity slightly as user zooms in
+      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 5, 1, 10, 2.5],
+      // Influence radius in pixels, shrinks slightly as user zooms in
+      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 5, 50, 8, 40, 10, 28],
+      // YlOrRd ramp: transparent → yellow → orange → dark burgundy
+      'heatmap-color': [
+        'interpolate', ['linear'], ['heatmap-density'],
+        0,    'rgba(0,0,0,0)',
+        0.15, 'rgba(255,255,178,0.45)',
+        0.35, 'rgba(254,204,92,0.62)',
+        0.55, 'rgba(253,141,60,0.74)',
+        0.75, 'rgba(227,74,51,0.82)',
+        1.0,  'rgba(128,0,38,0.88)',
+      ],
+      // Fade out as the user zooms in past zoom 8 (circles take over)
+      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 8, 1, 11, 0],
+    },
+  }, 'club-points-liga-3'); // render below all circle layers
 });
 
 madeiraMap.on('load', () => setupLayers(madeiraMap));
@@ -179,10 +210,25 @@ document.getElementById('season-select').addEventListener('change', (e) => {
 document.querySelectorAll('input[data-league]').forEach((checkbox) => {
   checkbox.addEventListener('change', () => {
     const { league } = checkbox.dataset;
+    checkbox.checked ? activeLeagueSet.add(league) : activeLeagueSet.delete(league);
+
     const visibility = checkbox.checked ? 'visible' : 'none';
     for (const map of allMaps) {
       const layerId = `club-points-${league}`;
       if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', visibility);
     }
+
+    // Keep heatmap filter in sync with active leagues
+    if (mainMap.getLayer('clubs-heatmap')) {
+      mainMap.setFilter('clubs-heatmap',
+        ['in', ['get', 'league'], ['literal', [...activeLeagueSet]]],
+      );
+    }
   });
+});
+
+document.getElementById('toggle-heatmap').addEventListener('change', (e) => {
+  if (mainMap.getLayer('clubs-heatmap')) {
+    mainMap.setLayoutProperty('clubs-heatmap', 'visibility', e.target.checked ? 'visible' : 'none');
+  }
 });

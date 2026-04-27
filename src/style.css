@@ -109,6 +109,11 @@ select:focus {
   flex-shrink: 0;
 }
 
+.heatmap-dot {
+  background: linear-gradient(135deg, #FEC45C, #E34A33, #800026);
+  border-radius: 3px;
+}
+
 .league-name {
   flex: 1;
   font-size: 13px;
