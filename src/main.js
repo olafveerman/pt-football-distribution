@@ -79,14 +79,22 @@ function refreshAll() {
   }
 }
 
+function ordinal(n) {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] ?? s[v] ?? s[0]);
+}
+
 function buildPopupHTML(props) {
   const leagueColor = LEAGUE_COLORS[props.league] ?? '#666';
   const leagueLabel = LEAGUE_LABELS[props.league] ?? props.league;
   const capacity = props.capacity ? Number(props.capacity).toLocaleString('en') : null;
+  const hasStats = props.position != null && props.points != null;
   return `
     <div class="popup-inner">
       <div class="popup-league" style="color:${leagueColor}">${leagueLabel}</div>
       <div class="popup-name">${props.name}</div>
+      ${hasStats ? `<div class="popup-season-stat">Finished ${ordinal(props.position)} · ${props.points} pts</div>` : ''}
       <dl class="popup-details">
         <dt>City</dt>    <dd>${props.city}</dd>
         <dt>Stadium</dt> <dd>${props.stadium}</dd>
