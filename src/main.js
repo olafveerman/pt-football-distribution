@@ -182,8 +182,8 @@ mainMap.on('load', () => {
     maxzoom: 11,
     layout: { visibility: 'none' },
     paint: {
-      // Each club contributes equally regardless of league
-      'heatmap-weight': 1,
+      // Weight by cross-league pyramid rank (Liga 1 champion = 1, Liga 3 last = 0)
+      'heatmap-weight': ['get', 'heatmapWeight'],
       // Increase intensity slightly as user zooms in
       'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 5, 1, 10, 2.5],
       // Influence radius in pixels, shrinks slightly as user zooms in
