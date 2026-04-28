@@ -179,15 +179,15 @@ mainMap.on('load', () => {
     id: 'clubs-heatmap',
     type: 'heatmap',
     source: 'clubs',
-    maxzoom: 11,
+    maxzoom: 16,
     layout: { visibility: 'none' },
     paint: {
-      // Each club contributes equally regardless of league
-      'heatmap-weight': 1,
-      // Increase intensity slightly as user zooms in
-      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 5, 1, 10, 2.5],
-      // Influence radius in pixels, shrinks slightly as user zooms in
-      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 5, 50, 8, 40, 10, 28],
+      // Weight by cross-league pyramid rank (Liga 1 champion = 1, Liga 3 last = 0)
+      'heatmap-weight': ['get', 'heatmapWeight'],
+      // Ramp up intensity aggressively at higher zooms to compensate for radius shrink
+      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 5, 1, 10, 3, 14, 6],
+      // Large radius; shrinks slowly to keep blobs overlapping at city-level zoom
+      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 5, 70, 8, 65, 11, 55, 14, 50, 16, 40],
       // YlOrRd ramp: transparent → yellow → orange → dark burgundy
       'heatmap-color': [
         'interpolate', ['linear'], ['heatmap-density'],
@@ -198,8 +198,8 @@ mainMap.on('load', () => {
         0.75, 'rgba(227,74,51,0.82)',
         1.0,  'rgba(128,0,38,0.88)',
       ],
-      // Fade out as the user zooms in past zoom 8 (circles take over)
-      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 8, 1, 11, 0],
+      // Hold opacity constant until zoom 12, then fade out by zoom 16
+      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 5, 0.8, 12, 0.8, 16, 0],
     },
   }, 'club-points-liga-3'); // render below all circle layers
 });

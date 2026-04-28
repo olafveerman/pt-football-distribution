@@ -1054,14 +1054,31 @@ export const seasons = {
 
 // ── GeoJSON builder ────────────────────────────────────────────────────────────
 
+// Liga pyramid order — used to assign consistent cross-league global ranks
+const PYRAMID = ['liga-1', 'liga-2', 'liga-3'];
+
 /**
  * Build a GeoJSON FeatureCollection for the given season and active leagues.
  * Entries may be a string (id only), an array [id, position, points], or an
  * object { id, position, points }.
+ *
+ * Each feature gets a `heatmapWeight` property (0–1) that places clubs in a
+ * cross-league hierarchy: Liga 1 champion = 1.0, Liga 3 last place = 0.0,
+ * and Liga 1 last place always outweighs Liga 2 first place.
  */
 export function buildGeoJSON(season, activeLeagues = ['liga-1', 'liga-2', 'liga-3']) {
   const seasonData = seasons[season];
   if (!seasonData) return { type: 'FeatureCollection', features: [] };
+
+  // Compute offsets across the full pyramid so weights are stable when leagues
+  // are toggled on/off (filtering changes visibility, not the weight scale).
+  const leagueSizes = {};
+  for (const lg of PYRAMID) leagueSizes[lg] = seasonData[lg]?.length ?? 0;
+  const totalClubs = PYRAMID.reduce((sum, lg) => sum + leagueSizes[lg], 0);
+
+  const offsets = {};
+  let running = 0;
+  for (const lg of PYRAMID) { offsets[lg] = running; running += leagueSizes[lg]; }
 
   const features = [];
   for (const league of activeLeagues) {
@@ -1079,10 +1096,19 @@ export function buildGeoJSON(season, activeLeagues = ['liga-1', 'liga-2', 'liga-
       const club = clubInfo[id];
       if (!club) continue;
       const { coordinates: _, ...clubProps } = club;
+
+      // Global rank in the pyramid; fall back to league midpoint when no final
+      // standings exist (e.g. the ongoing season).
+      const pos = position ?? Math.ceil(leagueSizes[league] / 2);
+      const globalRank = (offsets[league] ?? 0) + pos;
+      const heatmapWeight = totalClubs > 1
+        ? 1 - (globalRank - 1) / (totalClubs - 1)
+        : 1;
+
       features.push({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: club.coordinates },
-        properties: { id, league, position, points, ...clubProps },
+        properties: { id, league, position, points, heatmapWeight, ...clubProps },
       });
     }
   }
