@@ -18,7 +18,19 @@ const LEAGUE_LABELS = {
 
 const ALL_LEAGUES = ['liga-1', 'liga-2', 'liga-3'];
 
-let currentSeason = '2025-26';
+const SEASON_OPTIONS = [
+  '2000-01','2001-02','2002-03','2003-04','2004-05','2005-06','2006-07',
+  '2007-08','2008-09','2009-10','2010-11','2011-12','2012-13','2013-14',
+  '2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21',
+  '2021-22','2022-23','2023-24','2024-25','2025-26',
+];
+
+const SEASON_LABELS = Object.fromEntries(
+  SEASON_OPTIONS.map((s) => [s, s.replace('-', '–')]),
+);
+
+let currentSeasonIndex = SEASON_OPTIONS.length - 1; // start at 2025-26
+let currentSeason = SEASON_OPTIONS[currentSeasonIndex];
 const activeLeagueSet = new Set(ALL_LEAGUES);
 
 // ── Map instances ─────────────────────────────────────────────────────────────
@@ -209,11 +221,60 @@ azoresMap.on('load',  () => setupLayers(azoresMap));
 
 // ── UI controls ───────────────────────────────────────────────────────────────
 
-document.getElementById('season-select').addEventListener('change', (e) => {
-  currentSeason = e.target.value;
+const seasonDisplay = document.getElementById('season-display');
+const seasonPrev    = document.getElementById('season-prev');
+const seasonNext    = document.getElementById('season-next');
+const seasonPlay    = document.getElementById('season-play');
+
+let playTimer = null;
+
+function goToSeasonIndex(idx) {
+  currentSeasonIndex = idx;
+  currentSeason = SEASON_OPTIONS[idx];
+  seasonDisplay.textContent = SEASON_LABELS[currentSeason];
+  seasonPrev.disabled = idx === 0;
+  seasonNext.disabled = idx === SEASON_OPTIONS.length - 1;
   updateCounts(currentSeason);
   refreshAll();
+}
+
+function stopPlay() {
+  clearInterval(playTimer);
+  playTimer = null;
+  seasonPlay.textContent = '▶ Play';
+  seasonPlay.classList.remove('is-playing');
+}
+
+function startPlay() {
+  // If already at the end, restart from beginning
+  if (currentSeasonIndex === SEASON_OPTIONS.length - 1) goToSeasonIndex(0);
+  seasonPlay.textContent = '⏸ Pause';
+  seasonPlay.classList.add('is-playing');
+  playTimer = setInterval(() => {
+    if (currentSeasonIndex < SEASON_OPTIONS.length - 1) {
+      goToSeasonIndex(currentSeasonIndex + 1);
+    } else {
+      stopPlay();
+    }
+  }, 1200);
+}
+
+seasonPrev.addEventListener('click', () => {
+  stopPlay();
+  if (currentSeasonIndex > 0) goToSeasonIndex(currentSeasonIndex - 1);
 });
+
+seasonNext.addEventListener('click', () => {
+  stopPlay();
+  if (currentSeasonIndex < SEASON_OPTIONS.length - 1) goToSeasonIndex(currentSeasonIndex + 1);
+});
+
+seasonPlay.addEventListener('click', () => {
+  playTimer ? stopPlay() : startPlay();
+});
+
+// Initialise display state
+goToSeasonIndex(currentSeasonIndex);
 
 document.querySelectorAll('input[data-league]').forEach((checkbox) => {
   checkbox.addEventListener('change', () => {
