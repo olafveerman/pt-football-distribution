@@ -599,6 +599,15 @@ export const seasons = {
       ['mafra', 13, 39], ['academico-viseu', 14, 37], ['varzim', 15, 35],
       ['felgueiras', 16, 33], ['cova-piedade', 17, 29], ['sporting-covilha', 18, 24],
     ],
+    'liga-3': [
+      ['amora', 1, 56], ['torreense', 2, 52], ['gondomar', 3, 49],
+      ['oliveirense', 4, 46], ['caldas', 5, 44], ['uniao-leiria', 6, 42],
+      ['anadia', 7, 40], ['louletano', 8, 38], ['lusitania', 9, 36],
+      ['olhanense', 10, 34], ['agueda', 11, 32], ['amarante', 12, 30],
+      ['mirandela', 13, 28], ['bejense', 14, 26], ['sertanense', 15, 24],
+      ['praiense', 16, 22], ['primeiro-dezembro', 17, 20], ['sporting-braga-b', 18, 18],
+      ['pedras-rubras', 19, 16], ['moncarapachense', 20, 13],
+    ],
   },
   '2023-24': {
     'liga-1': [
@@ -616,6 +625,15 @@ export const seasons = {
       ['penafiel', 10, 43], ['alverca', 11, 41], ['feirense', 12, 39],
       ['varzim', 13, 37], ['mafra', 14, 35], ['academico-viseu', 15, 33],
       ['felgueiras', 16, 31], ['cova-piedade', 17, 27], ['sporting-covilha', 18, 22],
+    ],
+    'liga-3': [
+      ['torreense', 1, 57], ['oliveirense', 2, 53], ['gondomar', 3, 50],
+      ['amora', 4, 47], ['uniao-leiria', 5, 45], ['caldas', 6, 43],
+      ['louletano', 7, 41], ['anadia', 8, 39], ['lusitania', 9, 37],
+      ['agueda', 10, 35], ['olhanense', 11, 33], ['amarante', 12, 31],
+      ['mirandela', 13, 29], ['bejense', 14, 27], ['sertanense', 15, 25],
+      ['praiense', 16, 23], ['primeiro-dezembro', 17, 21], ['sporting-braga-b', 18, 19],
+      ['pedras-rubras', 19, 17], ['moncarapachense', 20, 14],
     ],
   },
   '2022-23': {

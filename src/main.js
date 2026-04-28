@@ -235,6 +235,11 @@ document.querySelectorAll('input[data-league]').forEach((checkbox) => {
   });
 });
 
+const aboutModal = document.getElementById('about-modal');
+document.getElementById('open-about').addEventListener('click', () => { aboutModal.hidden = false; });
+document.getElementById('close-about').addEventListener('click', () => { aboutModal.hidden = true; });
+aboutModal.addEventListener('click', (e) => { if (e.target === aboutModal) aboutModal.hidden = true; });
+
 document.getElementById('toggle-heatmap').addEventListener('change', (e) => {
   if (mainMap.getLayer('clubs-heatmap')) {
     mainMap.setLayoutProperty('clubs-heatmap', 'visibility', e.target.checked ? 'visible' : 'none');

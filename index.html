@@ -85,6 +85,38 @@
       <p class="panel-note">
         Liga 2 &amp; 3 rosters are approximate — verify before publishing.
       </p>
+      <button class="panel-about-btn" id="open-about">About &amp; sources</button>
+    </div>
+
+    <div id="about-modal" class="modal-overlay" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="modal-close" id="close-about" aria-label="Close">&#215;</button>
+        <h2 id="modal-title">About this map</h2>
+        <p>
+          An interactive map of club geographic distribution across the top three
+          tiers of Portuguese football (Liga Portugal 1, 2 &amp; 3), from the
+          2000–01 season onwards.
+        </p>
+
+        <h3>Data sources</h3>
+        <ul>
+          <li>
+            <strong>League standings &amp; rosters</strong> —
+            <a href="https://www.fpf.pt" target="_blank" rel="noopener">Federação Portuguesa de Futebol</a>
+            and <a href="https://www.ligaportugal.pt" target="_blank" rel="noopener">Liga Portugal</a>.
+            Historical Liga 2 &amp; 3 data is approximate.
+          </li>
+          <li>
+            <strong>Basemap</strong> —
+            <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>
+            (Positron style), © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.
+          </li>
+          <li>
+            <strong>Map rendering</strong> —
+            <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre GL JS</a>.
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div id="insets">
